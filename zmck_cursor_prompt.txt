@@ -1,0 +1,227 @@
+===================== START OF CURSOR PROJECT PROMPT =====================
+
+# Project Title
+ZMCK Engineering Time-Tracking & Project Performance System (MVP – On-Premise, Eswatini Market)
+
+# Objective
+Build a full-stack, on-premise, Asana‑standard engineering project time tracking and performance management application for ZMCK (Eswatini). The system will track worked hours, project/task allocation, performance indicators, approvals, document uploads, supervisor reviews, and export data compatible with Sage ACCPAC.
+
+This MUST be:
+- Production‑grade
+- On‑premise (no cloud dependency)
+- Asana‑like UX quality
+- Affordable to maintain (target project value: E800,000 SZL)
+- Easy to deploy via Docker Compose
+
+===========================================================
+SECTION 1 — CORE REQUIREMENTS
+===========================================================
+
+## 1.1 Use‑Case Summary
+- Each staff member logs hours worked on tasks and projects (timer + manual entry)
+- Some projects have fixed allocated hours (progress tracking required)
+- Others are open‑ended but still require time logging
+- Supervisors review & approve time submissions
+- Accounts export approved hours to Sage ACCPAC for costing
+- Generate staff productivity and efficiency insights
+- Allow attachment uploads (drawings, reports, etc.)
+
+## 1.2 Functional Features (MVP — MUST DELIVER)
+1. User Authentication (JWT)
+2. Role‑based Access Control (Admin, Supervisor, Engineer)
+3. Project & Task Management (similar to Asana boards & lists)
+4. Time Entry:
+   - Start/Stop Timer
+   - Manual Entry
+5. Approval Workflow
+6. Productivity Analytics Dashboard (basic)
+7. File Upload Storage (local filesystem)
+8. Sage ACCPAC CSV export mapping (configurable)
+9. Audit logs for compliance & HR monitoring
+10. On‑prem deployment using Docker Compose
+
+## 1.3 Non‑Functional Requirements
+- Maintainable, scalable architecture
+- Strict type safety everywhere
+- Secure password hashing
+- No external cloud services
+- Minimal external 3rd‑party dependencies
+- Documentation + setup scripts provided
+
+===========================================================
+SECTION 2 — TECHNOLOGY STACK
+===========================================================
+
+### Frontend
+- React + TypeScript
+- Tailwind CSS
+- React Router
+- Clean components like Asana (board view + list view)
+
+### Backend
+- Node.js + TypeScript
+- Express or Fastify
+- Swagger API documentation
+- File upload handling (local disk + safe filenames)
+- RBAC Middleware
+
+### Database
+- PostgreSQL (on‑prem)
+- Migrations using Knex or TypeORM
+
+### Deployment
+- Docker + Docker Compose
+- Reverse proxy: Nginx
+- Local storage volumes for files & DB
+
+===========================================================
+SECTION 3 — SYSTEM MODULES
+===========================================================
+
+### 3.1 User & Role Management
+- Admin manages users
+- Roles: Admin • Supervisor • Engineer
+- Profile stores hourly rate for costing
+
+### 3.2 Project Management
+Project metadata includes:
+- Name
+- Code
+- Client
+- Manager
+- Allocated Hours (nullable)
+- Budget Amount (nullable)
+- Type: FIXED | OPEN | HYBRID
+- Status progression
+
+### 3.3 Task Management (Asana‑style)
+Task metadata includes:
+- Title, description
+- Assigned user
+- Estimated hours (optional)
+- Progress percentage
+- Status (To‑Do → In‑Progress → Review → Done)
+- Due date
+- Attachments & comments
+
+### 3.4 Time Logging
+Support:
+- Timer based tracking
+- Manual input
+
+Store:
+- Start & stop timestamps
+- Duration (hours)
+- Notes
+- Approval status
+- Related task/project/user
+- Supporting attachment
+
+### 3.5 Supervisor Approval Workflow
+- Approve, reject or request changes
+- Supervisor notification center
+- Reports only include approved entries
+
+### 3.6 Sage ACCPAC Export Module
+- CSV format
+- Admin configurable column mapping
+- Export per date range or project
+- Preview before download
+
+### 3.7 KPI & Analytics
+Basic metrics:
+- Hours vs allocation progress
+- Time variance vs estimate
+- Workload heatmap
+- Efficiency percentile
+
+===========================================================
+SECTION 4 — DATABASE SCHEMA
+===========================================================
+
+Use PostgreSQL with strict foreign keys:
+
+Tables Required:
+users
+projects
+tasks
+time_entries
+attachments
+comments
+audit_logs
+sac_csv_mappings
+
+(Include migrations + seed data)
+
+===========================================================
+SECTION 5 — API ENDPOINT REQUIREMENTS
+===========================================================
+
+Base URL: /api
+
+Examples:
+POST /auth/login
+GET /users
+POST /projects
+GET /projects/:id
+POST /tasks
+POST /tasks/:id/time
+PUT /time-entries/:id/approve
+GET /export/sage?from&to&project_id
+
+Use OpenAPI (Swagger)
+
+===========================================================
+SECTION 6 — FILE STORAGE
+===========================================================
+
+- Store uploaded files under /data/uploads
+- Use safe filenames and enforce file type whitelist
+
+===========================================================
+SECTION 7 — DOCKER & DEPLOYMENT GUIDE
+===========================================================
+
+Deliver:
+- docker-compose.yml
+- environment template
+- setup scripts:
+  install.sh
+  backup.sh
+
+===========================================================
+SECTION 8 — TESTING REQUIREMENTS
+===========================================================
+
+### Automated:
+- Unit tests (Jest)
+- Basic UI tests (React Testing Library)
+
+### Manual Acceptance:
+- Supervisor approval flow
+- CSV export importable into Sage ACCPAC
+- All core pages interactive & responsive
+
+===========================================================
+SECTION 9 — DOCUMENTATION REQUIRED
+===========================================================
+
+Deliver:
+README.md
+DEPLOYMENT.md
+API.md
+SAGE-EXPORT-GUIDE.md
+DB-SCHEMA.md
+
+===========================================================
+SECTION 10 — DELIVERY RULES
+===========================================================
+
+1. Generate production‑quality code
+2. No placeholder "TODO" sections
+3. Document all environment variables
+4. Provide a final ZIP folder with full working system
+5. Include screenshots or interface previews if possible
+6. Provide clear developer handover instructions
+
+===================== END OF CURSOR PROJECT PROMPT =====================

@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: zmck-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-zmck_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zmck_password}
+      POSTGRES_DB: ${POSTGRES_DB:-zmck_timetracking}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zmck_user}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - zmck-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: zmck-backend
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: ${BACKEND_PORT:-3001}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-zmck_user}:${POSTGRES_PASSWORD:-zmck_password}@postgres:5432/${POSTGRES_DB:-zmck_timetracking}
+      JWT_SECRET: ${JWT_SECRET:-change-me-in-production}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      UPLOAD_DIR: /app/data/uploads
+    volumes:
+      - ./data/uploads:/app/data/uploads
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - zmck-network
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: zmck-frontend
+    environment:
+      REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:3001/api}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - zmck-network
+    command: npm run dev
+
+  nginx:
+    image: nginx:alpine
+    container_name: zmck-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - zmck-network
+
+volumes:
+  postgres-data:
+
+networks:
+  zmck-network:
+    driver: bridge
+
