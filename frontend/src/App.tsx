@@ -12,6 +12,9 @@ import MyTasks from './pages/MyTasks';
 import Calendar from './pages/Calendar';
 import Timeline from './pages/Timeline';
 import Workload from './pages/Workload';
+import Expenses from './pages/Expenses';
+import Invoices from './pages/Invoices';
+import Budget from './pages/Budget';
 import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -41,6 +44,9 @@ function App() {
           <Route path="calendar" element={<Calendar />} />
           <Route path="timeline" element={<Timeline />} />
           <Route path="workload" element={<Workload />} />
+          <Route path="expenses" element={<Expenses />} />
+          <Route path="invoices" element={<Invoices />} />
+          <Route path="budget" element={<Budget />} />
         </Route>
       </Routes>
     </ErrorBoundary>

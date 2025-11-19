@@ -35,6 +35,9 @@ const Layout = () => {
 
   const adminNav = [
     { name: 'Time Tracking', href: '/time-tracking', icon: '⏱️' },
+    { name: 'Expenses', href: '/expenses', icon: '💰' },
+    { name: 'Invoices', href: '/invoices', icon: '🧾' },
+    { name: 'Budget', href: '/budget', icon: '💵' },
     { name: 'Approvals', href: '/approvals', icon: '✅' },
     { name: 'Analytics', href: '/analytics', icon: '📈' },
     { name: 'Workload', href: '/workload', icon: '⚖️' },

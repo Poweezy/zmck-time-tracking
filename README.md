@@ -4,6 +4,7 @@ A full-stack, on-premise time tracking and project performance management applic
 
 ## Features
 
+### Core Features
 - **User Authentication & RBAC**: JWT-based authentication with role-based access control (Admin, Supervisor, Engineer)
 - **Project Management**: Create and manage projects with fixed/open/hybrid types, allocated hours, and budgets
 - **Task Management**: Asana-style task management with status tracking and progress monitoring
@@ -13,6 +14,14 @@ A full-stack, on-premise time tracking and project performance management applic
 - **File Attachments**: Upload and manage documents, drawings, and reports
 - **Sage ACCPAC Export**: Export approved time entries to CSV format compatible with Sage ACCPAC
 - **Audit Logging**: Comprehensive audit trail for compliance and HR monitoring
+
+### BigTime-Inspired Features (New!)
+- **Expense Tracking**: Track project expenses with receipt uploads and approval workflow
+- **Invoicing**: Generate professional invoices from approved time entries and expenses
+- **Budget Management**: Real-time budget vs actual tracking with variance analysis
+- **Project Milestones**: Track project milestones with status and target dates
+- **Task Dependencies**: Define task relationships and dependencies
+- **Resource Management**: Team workload visualization and capacity tracking
 
 ## Technology Stack
 
@@ -91,6 +100,9 @@ Edit the `.env` file to configure:
 1. Manage users, projects, and tasks
 2. Configure Sage ACCPAC export mappings
 3. View audit logs and system analytics
+4. Track expenses and generate invoices
+5. Monitor budgets and project costs
+6. Manage milestones and task dependencies
 
 ## Backup
 
@@ -124,6 +136,8 @@ npm run dev
 - [Deployment Guide](DEPLOYMENT.md)
 - [Sage Export Guide](SAGE-EXPORT-GUIDE.md)
 - [Database Schema](DB-SCHEMA.md)
+- [BigTime Features Guide](QUICK-START-BIGTIME-FEATURES.md) - Quick start for new features
+- [BigTime Implementation](BIGTIME-FEATURES-IMPLEMENTED.md) - Detailed feature documentation
 
 ## Support
 

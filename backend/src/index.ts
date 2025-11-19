@@ -23,6 +23,11 @@ import templateRoutes from './routes/templates';
 import goalRoutes from './routes/goals';
 import portfolioRoutes from './routes/portfolios';
 import formRoutes from './routes/forms';
+import { expenseRoutes } from './routes/expenses';
+import { milestoneRoutes } from './routes/milestones';
+import { taskDependencyRoutes } from './routes/taskDependencies';
+import { invoiceRoutes } from './routes/invoices';
+import { budgetRoutes } from './routes/budget';
 
 // Load .env from backend directory or root
 dotenv.config({ path: path.join(__dirname, '../../.env') });
@@ -93,6 +98,11 @@ app.use('/api/templates', templateRoutes);
 app.use('/api/goals', goalRoutes);
 app.use('/api/portfolios', portfolioRoutes);
 app.use('/api/forms', formRoutes);
+app.use('/api/expenses', expenseRoutes);
+app.use('/api/milestones', milestoneRoutes);
+app.use('/api/task-dependencies', taskDependencyRoutes);
+app.use('/api/invoices', invoiceRoutes);
+app.use('/api/budget', budgetRoutes);
 
 // 404 handler - must be before error handler
 app.use((req, res, next) => {
