@@ -153,7 +153,7 @@
     @apply w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl 
            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent 
            transition-all duration-200 bg-white dark:bg-gray-800 
-           placeholder-gray-400 dark:placeholder-gray-500 
+           placeholder-gray-600 dark:placeholder-gray-500 
            text-gray-900 dark:text-gray-100 shadow-sm hover:shadow-md;
   }
 
@@ -192,7 +192,7 @@
   }
 
   .empty-state-icon {
-    @apply mx-auto h-12 w-12 text-gray-400 mb-4;
+    @apply mx-auto h-12 w-12 text-gray-600 mb-4;
   }
 
   .empty-state-title {
@@ -200,7 +200,7 @@
   }
 
   .empty-state-description {
-    @apply text-sm text-gray-500 dark:text-gray-400 max-w-sm mx-auto;
+    @apply text-sm text-gray-700 dark:text-gray-400 max-w-sm mx-auto;
   }
 
   /* Loading Spinner */

@@ -124,7 +124,7 @@ const MyTasks = () => {
         <div className="divide-y divide-gray-200">
           {filteredTasks.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-500">No tasks found</p>
+              <p className="text-gray-700">No tasks found</p>
             </div>
           ) : (
             filteredTasks.map((task) => (
@@ -152,7 +152,7 @@ const MyTasks = () => {
                     {task.description && (
                       <p className="text-sm text-gray-600 mb-2 line-clamp-2">{task.description}</p>
                     )}
-                    <div className="flex items-center space-x-4 text-sm text-gray-500">
+                    <div className="flex items-center space-x-4 text-sm text-gray-700">
                       {task.project_name && (
                         <span>
                           <span className="font-medium">{task.project_code}</span> - {task.project_name}

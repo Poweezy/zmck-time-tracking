@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { useTheme } from '../hooks/useTheme';
 import NotificationBell from './NotificationBell';
+import { useCommonShortcuts } from '../hooks/useKeyboardShortcuts';
+import KeyboardShortcutsHelp from './KeyboardShortcutsHelp';
 
 const Layout = () => {
   const { user, logout } = useAuth();
@@ -10,6 +12,9 @@ const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  
+  // Enable keyboard shortcuts
+  useCommonShortcuts();
 
   const navigation = [
     { name: 'Home', href: '/dashboard', icon: '🏠', action: null },
@@ -78,7 +83,7 @@ const Layout = () => {
                   <button
                     key={item.name}
                     onClick={item.action}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group w-full text-left text-gray-300 hover:bg-sidebar-hover hover:text-white"
+                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group w-full text-left text-gray-600 hover:bg-sidebar-hover hover:text-white"
                     title={!sidebarOpen ? item.name : undefined}
                     aria-label={item.name}
                   >
@@ -94,7 +99,7 @@ const Layout = () => {
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group w-full text-left ${
                     isActive(item.href)
                       ? 'bg-sidebar-active text-white font-medium'
-                      : 'text-gray-300 hover:bg-sidebar-hover hover:text-white'
+                      : 'text-gray-600 hover:bg-sidebar-hover hover:text-white'
                   }`}
                   title={!sidebarOpen ? item.name : undefined}
                   aria-label={item.name}
@@ -106,37 +111,14 @@ const Layout = () => {
             })}
           </div>
 
-          {/* Starred Section */}
-          {sidebarOpen && (
-            <div className="mb-6">
-              <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                Starred
-              </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sidebar-hover cursor-pointer group">
-                  <div className="w-4 h-4 rounded bg-red-500 flex-shrink-0"></div>
-                  <span className="text-sm text-gray-300 group-hover:text-white truncate">Brand Projects</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sidebar-hover cursor-pointer group">
-                  <div className="w-4 h-4 rounded bg-purple-500 flex-shrink-0"></div>
-                  <span className="text-sm text-gray-300 group-hover:text-white truncate">Q1 2024</span>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-sidebar-hover cursor-pointer group">
-                  <div className="w-4 h-4 rounded bg-green-500 flex-shrink-0"></div>
-                  <span className="text-sm text-gray-300 group-hover:text-white truncate">Internationalization</span>
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Projects Section */}
           <div className="mb-6">
             {sidebarOpen && (
               <div className="flex items-center justify-between px-3 py-2 mb-2">
-                <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Projects</div>
+                <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Projects</div>
                 <div className="flex items-center gap-1">
                   <button 
-                    className="p-1 hover:bg-sidebar-hover rounded text-gray-400 hover:text-white"
+                    className="p-1 hover:bg-sidebar-hover rounded text-gray-600 hover:text-white"
                     aria-label="Project options"
                     title="Project options"
                   >
@@ -145,7 +127,7 @@ const Layout = () => {
                     </svg>
                   </button>
                   <button 
-                    className="p-1 hover:bg-sidebar-hover rounded text-gray-400 hover:text-white"
+                    className="p-1 hover:bg-sidebar-hover rounded text-gray-600 hover:text-white"
                     aria-label="Add project"
                     title="Add project"
                   >
@@ -164,7 +146,7 @@ const Layout = () => {
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
                     isActive(item.href)
                       ? 'bg-sidebar-active text-white font-medium'
-                      : 'text-gray-300 hover:bg-sidebar-hover hover:text-white'
+                      : 'text-gray-600 hover:bg-sidebar-hover hover:text-white'
                   }`}
                   title={!sidebarOpen ? item.name : undefined}
                 >
@@ -179,7 +161,7 @@ const Layout = () => {
           {(user?.role === 'admin' || user?.role === 'supervisor') && (
             <div className="mb-6">
               {sidebarOpen && (
-                <div className="px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                <div className="px-3 py-2 text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">
                   Management
                 </div>
               )}
@@ -191,7 +173,7 @@ const Layout = () => {
                     className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
                       isActive(item.href)
                         ? 'bg-sidebar-active text-white font-medium'
-                        : 'text-gray-300 hover:bg-sidebar-hover hover:text-white'
+                        : 'text-gray-600 hover:bg-sidebar-hover hover:text-white'
                     }`}
                     title={!sidebarOpen ? item.name : undefined}
                   >
@@ -215,11 +197,11 @@ const Layout = () => {
                 <div className="text-sm font-medium text-white truncate">
                   {user?.firstName} {user?.lastName}
                 </div>
-                <div className="text-xs text-gray-400 capitalize">{user?.role}</div>
+                <div className="text-xs text-gray-600 capitalize">{user?.role}</div>
               </div>
               <button
                 onClick={logout}
-                className="p-2 hover:bg-sidebar-hover rounded-lg transition-colors text-gray-400 hover:text-white"
+                className="p-2 hover:bg-sidebar-hover rounded-lg transition-colors text-gray-600 hover:text-white"
                 title="Logout"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,7 +216,7 @@ const Layout = () => {
               </div>
               <button
                 onClick={logout}
-                className="p-2 hover:bg-sidebar-hover rounded-lg transition-colors text-gray-400 hover:text-white"
+                className="p-2 hover:bg-sidebar-hover rounded-lg transition-colors text-gray-600 hover:text-white"
                 title="Logout"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -263,7 +245,7 @@ const Layout = () => {
             <div className="flex-1 max-w-xl">
               <div className="relative">
                 <svg
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -282,7 +264,7 @@ const Layout = () => {
             <NotificationBell />
             <button 
               onClick={toggleTheme}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors text-gray-600 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white"
               aria-label="Toggle dark mode"
               title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
             >
@@ -307,6 +289,7 @@ const Layout = () => {
           <Outlet />
         </main>
       </div>
+      <KeyboardShortcutsHelp />
     </div>
   );
 };

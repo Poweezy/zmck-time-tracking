@@ -7,6 +7,8 @@ import ProjectModal from '../components/ProjectModal';
 import SearchBar from '../components/SearchBar';
 import ConfirmDialog from '../components/ConfirmDialog';
 import LoadingSkeleton from '../components/LoadingSkeleton';
+import FilterSort from '../components/FilterSort';
+import PrintButton from '../components/PrintButton';
 
 interface Project {
   id: number;
@@ -38,11 +40,15 @@ const Projects = () => {
     hasNext: false,
     hasPrev: false,
   });
+  const [statusFilter, setStatusFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('');
+  const [sortBy, setSortBy] = useState('name');
+  const [selectedProjects, setSelectedProjects] = useState<number[]>([]);
   const { user } = useAuth();
 
   useEffect(() => {
     fetchProjects();
-  }, [searchQuery, pagination.page]);
+  }, [searchQuery, pagination.page, statusFilter, typeFilter, sortBy]);
 
   const fetchProjects = async () => {
     try {
@@ -52,6 +58,15 @@ const Projects = () => {
       };
       if (searchQuery) {
         params.search = searchQuery;
+      }
+      if (statusFilter) {
+        params.status = statusFilter;
+      }
+      if (typeFilter) {
+        params.type = typeFilter;
+      }
+      if (sortBy) {
+        params.sortBy = sortBy;
       }
       const response = await api.get('/projects', { params });
       if (response.data.data) {
@@ -80,6 +95,42 @@ const Projects = () => {
     } catch (error: any) {
       toast.error(error.response?.data?.error || 'Failed to delete project');
     }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedProjects.length === 0) {
+      toast.error('Please select at least one project');
+      return;
+    }
+
+    try {
+      await Promise.all(selectedProjects.map((id) => api.delete(`/projects/${id}`)));
+      toast.success(`${selectedProjects.length} project(s) deleted successfully`);
+      setSelectedProjects([]);
+      fetchProjects();
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to delete projects');
+    }
+  };
+
+  const toggleSelection = (id: number) => {
+    setSelectedProjects((prev) =>
+      prev.includes(id) ? prev.filter((pid) => pid !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedProjects.length === projects.length) {
+      setSelectedProjects([]);
+    } else {
+      setSelectedProjects(projects.map((p) => p.id));
+    }
+  };
+
+  const clearFilters = () => {
+    setStatusFilter('');
+    setTypeFilter('');
+    setSortBy('name');
   };
 
   const handleCreate = () => {
@@ -125,20 +176,100 @@ const Projects = () => {
         )}
       </div>
 
-      <div className="mb-6">
-        <SearchBar
-          onSearch={setSearchQuery}
-          placeholder="Search projects by name, code, or client..."
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex-1">
+          <SearchBar
+            onSearch={setSearchQuery}
+            placeholder="Search projects by name, code, or client..."
+          />
+        </div>
+        <FilterSort
+          filters={[
+            {
+              label: 'Status',
+              key: 'status',
+              options: [
+                { value: 'planning', label: 'Planning' },
+                { value: 'active', label: 'Active' },
+                { value: 'on_hold', label: 'On Hold' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' },
+              ],
+              value: statusFilter,
+              onChange: setStatusFilter,
+            },
+            {
+              label: 'Type',
+              key: 'type',
+              options: [
+                { value: 'FIXED', label: 'Fixed' },
+                { value: 'OPEN', label: 'Open' },
+                { value: 'HYBRID', label: 'Hybrid' },
+              ],
+              value: typeFilter,
+              onChange: setTypeFilter,
+            },
+          ]}
+          sortOptions={[
+            { value: 'name', label: 'Name (A-Z)' },
+            { value: 'name_desc', label: 'Name (Z-A)' },
+            { value: 'code', label: 'Code (A-Z)' },
+            { value: 'created_at', label: 'Newest First' },
+            { value: 'created_at_desc', label: 'Oldest First' },
+          ]}
+          sortValue={sortBy}
+          onSortChange={setSortBy}
+          onClear={clearFilters}
         />
+        <PrintButton elementId="projects-content" title="Projects Report" />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {projects.map((project) => (
-          <div
-            key={project.id}
-            className="bg-white rounded-xl shadow-card border border-gray-100 p-6 hover:shadow-hover hover:border-primary-200 transition-all duration-200 cursor-pointer"
-            onClick={() => handleEdit(project)}
-          >
+      {selectedProjects.length > 0 && (
+        <div className="mb-4 p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-lg flex items-center justify-between">
+          <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+            {selectedProjects.length} project(s) selected
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleBulkDelete}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+            >
+              Delete Selected
+            </button>
+            <button
+              onClick={() => setSelectedProjects([])}
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
+            >
+              Clear Selection
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div id="projects-content">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {projects.map((project) => (
+            <div
+              key={project.id}
+              className={`bg-white rounded-xl shadow-card border border-gray-100 p-6 hover:shadow-hover hover:border-primary-200 transition-all duration-200 cursor-pointer ${
+                selectedProjects.includes(project.id) ? 'ring-2 ring-primary-500' : ''
+              }`}
+              onClick={() => handleEdit(project)}
+            >
+              {(user?.role === 'admin' || user?.role === 'supervisor') && (
+                <div className="flex items-center justify-end mb-2">
+                  <input
+                    type="checkbox"
+                    checked={selectedProjects.includes(project.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      toggleSelection(project.id);
+                    }}
+                    className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                    aria-label={`Select ${project.name}`}
+                  />
+                </div>
+              )}
             <div className="flex items-start justify-between mb-3">
               <div>
                 <h3 className="text-lg font-semibold text-gray-900">{project.name}</h3>
@@ -208,12 +339,13 @@ const Projects = () => {
               )}
             </div>
           </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {projects.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
-          <p className="text-gray-500 mb-4">No projects found</p>
+          <p className="text-gray-700 mb-4">No projects found</p>
           {(user?.role === 'admin' || user?.role === 'supervisor') && (
             <button
               onClick={handleCreate}

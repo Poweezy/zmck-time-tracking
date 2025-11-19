@@ -91,22 +91,22 @@ const TaskList = ({ projectId, searchQuery }: TaskListProps) => {
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gradient-to-r from-gray-50 to-gray-100/50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
               Task
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
               Project
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
               Assignee
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
               Status
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
               Progress
             </th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
               Due Date
             </th>
           </tr>
@@ -119,7 +119,7 @@ const TaskList = ({ projectId, searchQuery }: TaskListProps) => {
                   <div>
                     <div className="text-sm font-medium text-gray-900">{task.title}</div>
                     {task.description && (
-                      <div className="text-sm text-gray-500 mt-1 line-clamp-1">
+                      <div className="text-sm text-gray-700 mt-1 line-clamp-1">
                         {task.description}
                       </div>
                     )}
@@ -131,9 +131,9 @@ const TaskList = ({ projectId, searchQuery }: TaskListProps) => {
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span className="text-sm text-primary-600 font-medium">{task.project_code}</span>
-                <div className="text-xs text-gray-500">{task.project_name}</div>
+                <div className="text-xs text-gray-700">{task.project_name}</div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                 {task.assignee_name || '-'}
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -156,11 +156,11 @@ const TaskList = ({ projectId, searchQuery }: TaskListProps) => {
                   <span className="text-sm text-gray-600">{task.progress_percentage}%</span>
                 </div>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                 {task.due_date ? (
                   <span
                     className={
-                      new Date(task.due_date) < new Date() ? 'text-red-600' : 'text-gray-500'
+                      new Date(task.due_date) < new Date() ? 'text-red-600' : 'text-gray-700'
                     }
                   >
                     {format(new Date(task.due_date), 'MMM dd, yyyy')}

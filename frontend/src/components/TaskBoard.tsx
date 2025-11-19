@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { useAuth } from '../hooks/useAuth';
 import TaskModal from './TaskModal';
 import SearchBar from './SearchBar';
+import { useDragAndDrop } from '../hooks/useDragAndDrop';
 
 interface Task {
   id: number;
@@ -73,13 +74,26 @@ const TaskBoard = () => {
 
   const handleStatusChange = async (taskId: number, newStatus: string) => {
     try {
+      // Optimistic update
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId ? { ...task, status: newStatus as any } : task
+        )
+      );
+      
       await api.put(`/tasks/${taskId}`, { status: newStatus });
       toast.success('Task updated');
       fetchTasks();
     } catch (error: any) {
+      // Revert on error
+      fetchTasks();
       toast.error('Failed to update task');
     }
   };
+
+  const { handleDragStart, handleDragEnd, handleDragOver, handleDragLeave, handleDrop, dragOverColumn } = useDragAndDrop({
+    onDrop: handleStatusChange,
+  });
 
   const getPriorityColor = (priority: number) => {
     if (priority >= 4) return 'bg-red-100 text-red-800 border-red-300';
@@ -158,11 +172,21 @@ const TaskBoard = () => {
                   <span className="badge badge-primary text-xs">{columnTasks.length}</span>
                 </div>
               </div>
-              <div className="space-y-3 min-h-[400px]">
+              <div 
+                className={`space-y-3 min-h-[400px] transition-all duration-200 ${
+                  dragOverColumn === column.id ? 'bg-opacity-50 bg-primary-100 rounded-lg p-2' : ''
+                }`}
+                onDragOver={(e) => handleDragOver(e, column.id)}
+                onDragLeave={handleDragLeave}
+                onDrop={(e) => handleDrop(e, column.id, column.status)}
+              >
                 {columnTasks.map((task) => (
                   <div
                     key={task.id}
-                    className="card-interactive p-4 group cursor-pointer"
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task.id)}
+                    onDragEnd={handleDragEnd}
+                    className="card-interactive p-4 group cursor-move hover:shadow-lg transition-all duration-200"
                     onClick={() => {
                       setSelectedTask(task);
                       setIsTaskModalOpen(true);
@@ -183,14 +207,14 @@ const TaskBoard = () => {
                         {task.description}
                       </p>
                     )}
-                    <div className="flex items-center justify-between text-xs text-gray-500 mb-2">
+                    <div className="flex items-center justify-between text-xs text-gray-700 mb-2">
                       <span className="text-primary-600 font-medium">{task.project_code}</span>
                       {task.due_date && (
                         <span
                           className={
                             new Date(task.due_date) < new Date()
                               ? 'text-red-600'
-                              : 'text-gray-500'
+                              : 'text-gray-700'
                           }
                         >
                           {format(new Date(task.due_date), 'MMM dd')}
@@ -198,7 +222,7 @@ const TaskBoard = () => {
                       )}
                     </div>
                     {task.assignee_name && (
-                      <div className="text-xs text-gray-500 mb-2">
+                      <div className="text-xs text-gray-700 mb-2">
                         👤 {task.assignee_name}
                       </div>
                     )}
@@ -228,12 +252,12 @@ const TaskBoard = () => {
                 ))}
                 {columnTasks.length === 0 && (
                   <div className="empty-state py-12">
-                    <div className="empty-state-icon text-gray-300">
+                    <div className="empty-state-icon text-gray-600">
                       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                       </svg>
                     </div>
-                    <div className="empty-state-title text-sm text-gray-400">No tasks</div>
+                    <div className="empty-state-title text-sm text-gray-600">No tasks</div>
                   </div>
                 )}
               </div>

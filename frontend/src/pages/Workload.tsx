@@ -125,7 +125,7 @@ const Workload = () => {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="text-center py-8 text-gray-500">No data available</div>
+            <div className="text-center py-8 text-gray-700">No data available</div>
           )}
         </div>
 
@@ -149,7 +149,7 @@ const Workload = () => {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="text-center py-8 text-gray-500">No data available</div>
+            <div className="text-center py-8 text-gray-700">No data available</div>
           )}
         </div>
       </div>
@@ -158,22 +158,22 @@ const Workload = () => {
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gradient-to-r from-gray-50 to-gray-100/50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 User
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Logged Hours
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Capacity
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Utilization
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Projects
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Tasks
               </th>
             </tr>
@@ -184,10 +184,10 @@ const Workload = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {user.userName}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {user.totalHours}h
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {user.capacity}h
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -214,10 +214,10 @@ const Workload = () => {
                     </span>
                   </div>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {user.projects}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
                   {user.tasks}
                 </td>
               </tr>
@@ -226,7 +226,7 @@ const Workload = () => {
         </table>
         {workload.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No workload data available</p>
+            <p className="text-gray-700">No workload data available</p>
           </div>
         )}
       </div>

@@ -33,7 +33,7 @@ const SearchBar = ({ onSearch, placeholder = 'Search...', debounceMs = 300 }: Se
     <div className="relative">
       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
         <svg
-          className="h-5 w-5 text-gray-400"
+          className="h-5 w-5 text-gray-600"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -59,7 +59,7 @@ const SearchBar = ({ onSearch, placeholder = 'Search...', debounceMs = 300 }: Se
           className="absolute inset-y-0 right-0 pr-3 flex items-center"
         >
           <svg
-            className="h-5 w-5 text-gray-400 hover:text-gray-600"
+            className="h-5 w-5 text-gray-600 hover:text-gray-600"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

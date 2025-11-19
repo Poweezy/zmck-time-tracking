@@ -146,13 +146,13 @@ const Timeline = () => {
           <table className="min-w-full">
             <thead>
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sticky left-0 bg-white z-10 border-r">
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider sticky left-0 bg-white z-10 border-r">
                   Project
                 </th>
                 {days.map((day) => (
                   <th
                     key={day.toISOString()}
-                    className="px-2 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider min-w-[120px]"
+                    className="px-2 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider min-w-[120px]"
                   >
                     <div>{format(day, 'EEE')}</div>
                     <div className="text-gray-900 font-normal">{format(day, 'MMM d')}</div>
@@ -167,7 +167,7 @@ const Timeline = () => {
                   <tr key={project.id} className="hover:bg-gray-50">
                     <td className="px-4 py-3 text-sm font-medium text-gray-900 sticky left-0 bg-white z-10 border-r">
                       <div className="font-semibold">{project.code}</div>
-                      <div className="text-xs text-gray-500">{project.name}</div>
+                      <div className="text-xs text-gray-700">{project.name}</div>
                     </td>
                     {days.map((day, dayIndex) => {
                       const isInRange =

@@ -38,7 +38,7 @@ const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) =>
               <h3 className="text-lg font-medium text-gray-900">{title}</h3>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-500 focus:outline-none"
+                className="text-gray-600 hover:text-gray-700 focus:outline-none"
               >
                 <span className="sr-only">Close</span>
                 <svg

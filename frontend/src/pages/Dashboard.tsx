@@ -148,7 +148,7 @@ const Dashboard = () => {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Home</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-1">
+          <p className="text-lg text-gray-600 dark:text-gray-600 mb-1">
             {format(new Date(), 'EEEE, MMMM dd')}
           </p>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -159,19 +159,19 @@ const Dashboard = () => {
         {/* Stats */}
         <div className="flex items-center gap-6 text-sm">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-gray-600 dark:text-gray-400">My weekly stats</span>
-            <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <span className="font-medium text-gray-600 dark:text-gray-600">My weekly stats</span>
+            <svg className="w-4 h-4 text-gray-600 dark:text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <span className="text-green-600 dark:text-green-400">✓</span>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">17 tasks completed</span>
+              <span className="text-gray-700 dark:text-gray-600 font-medium">17 tasks completed</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-primary-600 dark:text-primary-400">👥</span>
-              <span className="text-gray-700 dark:text-gray-300 font-medium">42 collaborated with</span>
+              <span className="text-gray-700 dark:text-gray-600 font-medium">42 collaborated with</span>
             </div>
           </div>
         </div>
@@ -190,7 +190,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <button 
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors text-gray-600 dark:text-gray-700 hover:text-gray-900 dark:hover:text-gray-600"
                 aria-label="My Priorities settings"
                 title="My Priorities settings"
               >
@@ -207,7 +207,7 @@ const Dashboard = () => {
                 className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   prioritiesTab === 'upcoming'
                     ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                    : 'text-gray-600 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
                 Upcoming
@@ -217,7 +217,7 @@ const Dashboard = () => {
                 className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   prioritiesTab === 'overdue'
                     ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                    : 'text-gray-600 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
                 Overdue ({tasks.filter(t => t.due_date && new Date(t.due_date) < new Date() && t.status !== 'done').length})
@@ -227,7 +227,7 @@ const Dashboard = () => {
                 className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   prioritiesTab === 'completed'
                     ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                    : 'text-gray-600 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-100'
                 }`}
               >
                 Completed
@@ -246,7 +246,7 @@ const Dashboard = () => {
                   ))}
                 </div>
               ) : filteredTasks.length === 0 ? (
-                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                <div className="text-center py-12 text-gray-700 dark:text-gray-600">
                   <p className="text-sm mb-2">Click here to create a task...</p>
                   <button
                     onClick={() => navigate('/tasks/new')}
@@ -276,7 +276,7 @@ const Dashboard = () => {
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <p className={`text-sm font-medium ${task.status === 'done' ? 'line-through text-gray-500 dark:text-gray-500' : 'text-gray-900 dark:text-gray-100'}`}>
+                        <p className={`text-sm font-medium ${task.status === 'done' ? 'line-through text-gray-700 dark:text-gray-700' : 'text-gray-900 dark:text-gray-100'}`}>
                           {task.title}
                         </p>
                         {task.project_code && (
@@ -286,7 +286,7 @@ const Dashboard = () => {
                         )}
                       </div>
                       {task.due_date && (
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-gray-700 dark:text-gray-600">
                           {formatDueDate(task.due_date)}
                         </p>
                       )}
@@ -315,7 +315,7 @@ const Dashboard = () => {
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     projectsTab === 'projects'
                       ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                      : 'text-gray-600 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-100'
                   }`}
                 >
                   Projects
@@ -325,7 +325,7 @@ const Dashboard = () => {
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     projectsTab === 'recents'
                       ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm'
-                      : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100'
+                      : 'text-gray-600 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-100'
                   }`}
                 >
                   Recents
@@ -340,11 +340,11 @@ const Dashboard = () => {
                   className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl hover:border-primary-400 dark:hover:border-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-all cursor-pointer group"
                 >
                   <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:bg-primary-100 dark:group-hover:bg-primary-900/40 flex items-center justify-center mb-3 transition-colors">
-                    <svg className="w-6 h-6 text-gray-400 dark:text-gray-500 group-hover:text-primary-600 dark:group-hover:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-6 h-6 text-gray-600 dark:text-gray-700 group-hover:text-primary-600 dark:group-hover:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </div>
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-primary-700 dark:group-hover:text-primary-400">New Project</span>
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-600 group-hover:text-primary-700 dark:group-hover:text-primary-400">New Project</span>
               </Link>
 
               {/* Project Cards */}
@@ -362,11 +362,11 @@ const Dashboard = () => {
                         <h4 className="font-semibold text-gray-900 dark:text-gray-100 truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                           {project.name}
                         </h4>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{project.code}</p>
+                        <p className="text-xs text-gray-700 dark:text-gray-600 mt-1">{project.code}</p>
                       </div>
                     </div>
                     {project.tasks_due_soon !== undefined && project.tasks_due_soon > 0 && (
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                      <p className="text-xs text-gray-600 dark:text-gray-600 mt-2">
                         {project.tasks_due_soon} tasks due soon
                       </p>
                     )}
@@ -386,7 +386,7 @@ const Dashboard = () => {
 
         {/* Customize Button */}
         <div className="flex justify-end">
-          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-600 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
@@ -411,7 +411,7 @@ const Dashboard = () => {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Dashboard</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">Overview of your time tracking and project performance</p>
+        <p className="text-lg text-gray-600 dark:text-gray-600">Overview of your time tracking and project performance</p>
       </div>
 
       {/* Stats Cards */}
@@ -422,9 +422,9 @@ const Dashboard = () => {
               ⏱️
             </div>
           </div>
-          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Total Hours</h3>
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-600 uppercase tracking-wider mb-2">Total Hours</h3>
           <p className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">{data.totalHours.toFixed(2)}</p>
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Hours tracked</p>
+          <p className="text-xs font-medium text-gray-700 dark:text-gray-600">Hours tracked</p>
         </div>
         <div className="card-interactive group bg-gradient-to-br from-yellow-50 to-yellow-100/50 dark:from-yellow-900/20 dark:to-yellow-800/20 border-yellow-200 dark:border-yellow-800">
           <div className="flex items-center justify-between mb-3">
@@ -432,9 +432,9 @@ const Dashboard = () => {
               ⏳
             </div>
           </div>
-          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Pending Approvals</h3>
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-600 uppercase tracking-wider mb-2">Pending Approvals</h3>
           <p className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">{data.pendingApprovals}</p>
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Awaiting review</p>
+          <p className="text-xs font-medium text-gray-700 dark:text-gray-600">Awaiting review</p>
         </div>
         <div className="card-interactive group bg-gradient-to-br from-green-50 to-green-100/50 dark:from-green-900/20 dark:to-green-800/20 border-green-200 dark:border-green-800">
           <div className="flex items-center justify-between mb-3">
@@ -442,9 +442,9 @@ const Dashboard = () => {
               📁
             </div>
           </div>
-          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Active Projects</h3>
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-600 uppercase tracking-wider mb-2">Active Projects</h3>
           <p className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">{data.hoursByProject.length}</p>
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Currently active</p>
+          <p className="text-xs font-medium text-gray-700 dark:text-gray-600">Currently active</p>
         </div>
         <div className="card-interactive group bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/20 border-purple-200 dark:border-purple-800">
           <div className="flex items-center justify-between mb-3">
@@ -452,9 +452,9 @@ const Dashboard = () => {
               👥
             </div>
           </div>
-          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2">Active Users</h3>
+          <h3 className="text-xs font-semibold text-gray-600 dark:text-gray-600 uppercase tracking-wider mb-2">Active Users</h3>
           <p className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-1">{data.hoursByUser.length}</p>
-          <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Team members</p>
+          <p className="text-xs font-medium text-gray-700 dark:text-gray-600">Team members</p>
         </div>
       </div>
 
@@ -487,7 +487,7 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="text-center py-12 text-gray-500">No data available</div>
+            <div className="text-center py-12 text-gray-700">No data available</div>
           )}
         </div>
 
@@ -518,7 +518,7 @@ const Dashboard = () => {
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="text-center py-12 text-gray-500">No data available</div>
+            <div className="text-center py-12 text-gray-700">No data available</div>
           )}
         </div>
       </div>

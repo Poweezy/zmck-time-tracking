@@ -76,7 +76,7 @@ const NotificationBell = () => {
             fetchNotifications();
           }
         }}
-            className="relative p-2.5 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 group"
+            className="relative p-2.5 text-gray-600 dark:text-gray-600 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 group"
       >
         <svg
           className={`h-6 w-6 transition-transform duration-200 ${isOpen ? 'rotate-12' : 'group-hover:scale-110'}`}
@@ -147,14 +147,14 @@ const NotificationBell = () => {
                                {!notification.is_read && (
                                  <div className="mt-1.5 w-2 h-2 bg-primary-600 dark:bg-primary-400 rounded-full flex-shrink-0 animate-pulse"></div>
                                )}
-                               <p className={`text-sm font-semibold ${!notification.is_read ? 'text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-300'}`}>
+                               <p className={`text-sm font-semibold ${!notification.is_read ? 'text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-600'}`}>
                                  {notification.title}
                                </p>
                              </div>
                              {notification.message && (
-                               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1.5 leading-relaxed">{notification.message}</p>
+                               <p className="text-xs text-gray-700 dark:text-gray-600 mt-1.5 leading-relaxed">{notification.message}</p>
                              )}
-                             <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                             <p className="text-xs text-gray-600 dark:text-gray-700 mt-2">
                           {new Date(notification.created_at).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',

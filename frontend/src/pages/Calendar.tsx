@@ -183,7 +183,7 @@ const Calendar = () => {
                     </div>
                   ))}
                   {dayEvents.length > 3 && (
-                    <div className="text-xs text-gray-500">+{dayEvents.length - 3} more</div>
+                    <div className="text-xs text-gray-700">+{dayEvents.length - 3} more</div>
                   )}
                 </div>
               </div>
