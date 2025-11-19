@@ -253,6 +253,18 @@ expenseRoutes.put(
         entityId: parseInt(id),
       });
 
+      // Send email notification
+      const user = await db('users').where({ id: expense.user_id }).first();
+      if (user && user.email) {
+        const { emailService } = await import('../utils/emailService');
+        await emailService.sendExpenseApproved(
+          user.email,
+          `${user.first_name} ${user.last_name}`,
+          expense.amount,
+          expense.category
+        );
+      }
+
       res.json({ message: 'Expense approved' });
     } catch (error: any) {
       console.error('Error approving expense:', error);

@@ -276,6 +276,22 @@ invoiceRoutes.put(
         entityId: parseInt(id),
       });
 
+      // Send email notification to client
+      const project = await db('projects').where({ id: invoice.project_id }).first();
+      if (project && project.client) {
+        // In a real scenario, you'd have a client email in a clients table
+        // For now, we'll use a placeholder or get from project
+        const clientEmail = process.env.DEFAULT_CLIENT_EMAIL || 'client@example.com';
+        const { emailService } = await import('../utils/emailService');
+        await emailService.sendInvoiceSent(
+          clientEmail,
+          project.client,
+          invoice.invoice_number,
+          invoice.total_amount,
+          new Date(invoice.due_date).toLocaleDateString()
+        );
+      }
+
       res.json({ message: 'Invoice sent' });
     } catch (error: any) {
       console.error('Error sending invoice:', error);

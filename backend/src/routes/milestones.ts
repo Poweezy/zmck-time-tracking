@@ -3,6 +3,7 @@ import { body, query, validationResult, param } from 'express-validator';
 import { db } from '../db';
 import { authenticate, authorize, AuthRequest } from '../middleware/auth';
 import { createAuditLog } from '../utils/auditLogger';
+import { emailService } from '../utils/emailService';
 
 export const milestoneRoutes = Router();
 milestoneRoutes.use(authenticate);

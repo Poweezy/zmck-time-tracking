@@ -115,6 +115,19 @@ approvalRoutes.put(
         entityId: parseInt(id),
       });
 
+      // Send email notification
+      const user = await db('users').where({ id: entry.user_id }).first();
+      const project = await db('projects').where({ id: entry.project_id }).first();
+      if (user && user.email && project) {
+        const { emailService } = await import('../utils/emailService');
+        await emailService.sendTimeEntryApproved(
+          user.email,
+          `${user.first_name} ${user.last_name}`,
+          entry.duration_hours,
+          project.name
+        );
+      }
+
       res.json(updatedEntry);
     } catch (error) {
       console.error('Approve time entry error:', error);
@@ -188,6 +201,19 @@ approvalRoutes.put(
         entityType: 'time_entry',
         entityId: parseInt(id),
       });
+
+      // Send email notification
+      const user = await db('users').where({ id: entry.user_id }).first();
+      const project = await db('projects').where({ id: entry.project_id }).first();
+      if (user && user.email && project) {
+        const { emailService } = await import('../utils/emailService');
+        await emailService.sendTimeEntryRejected(
+          user.email,
+          `${user.first_name} ${user.last_name}`,
+          project.name,
+          rejectionReason
+        );
+      }
 
       res.json(updatedEntry);
     } catch (error) {

@@ -82,6 +82,7 @@ Edit the `.env` file to configure:
 - JWT secret key
 - File upload settings
 - API URLs
+- Email/SMTP settings (optional - see [Email Configuration](EMAIL-CONFIGURATION.md))
 
 ## Usage
 

@@ -267,6 +267,20 @@ taskRoutes.post(
         userAgent: req.get('user-agent'),
       });
 
+      // Send email if task is assigned to a user
+      if (assignedTo) {
+        const assignedUser = await db('users').where({ id: assignedTo }).first();
+        if (assignedUser && assignedUser.email && project) {
+          const { emailService } = await import('../utils/emailService');
+          await emailService.sendTaskAssigned(
+            assignedUser.email,
+            `${assignedUser.first_name} ${assignedUser.last_name}`,
+            title,
+            project.name
+          );
+        }
+      }
+
       res.status(201).json(task);
     } catch (error) {
       console.error('Create task error:', error);
@@ -358,6 +372,21 @@ taskRoutes.put(
         ipAddress: req.ip,
         userAgent: req.get('user-agent'),
       });
+
+      // Send email if task was assigned to a new user
+      if (assignedTo && assignedTo !== existingTask.assigned_to) {
+        const assignedUser = await db('users').where({ id: assignedTo }).first();
+        const project = await db('projects').where({ id: updatedTask.project_id }).first();
+        if (assignedUser && assignedUser.email && project) {
+          const { emailService } = await import('../utils/emailService');
+          await emailService.sendTaskAssigned(
+            assignedUser.email,
+            `${assignedUser.first_name} ${assignedUser.last_name}`,
+            updatedTask.title,
+            project.name
+          );
+        }
+      }
 
       res.json(updatedTask);
     } catch (error) {
