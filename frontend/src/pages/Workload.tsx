@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } from 'recharts';
-import { addWeeks, endOfWeek, format, isWithinInterval, startOfWeek } from 'date-fns';
+import { format } from 'date-fns';
 
 interface UserWorkload {
   userId: number;
@@ -25,8 +25,8 @@ interface ResourceAllocation {
 interface ResourceWeek {
   id: string;
   label: string;
-  start: Date;
-  end: Date;
+  start: string;
+  end: string;
   health: ResourceAllocation['status'];
   allocations: ResourceAllocation[];
 }
@@ -39,14 +39,44 @@ interface ProjectAllocation {
 type SelectedUser = number | 'all';
 
 const HOURS_PER_WEEK = 40;
-const DEFAULT_TASK_ESTIMATE = 6;
-const PLANNING_WEEKS = 4;
 
-const getStatusFromUtilization = (utilization: number): ResourceAllocation['status'] => {
-  if (utilization >= 110) return 'overbooked';
-  if (utilization >= 85) return 'tight';
-  if (utilization >= 50) return 'balanced';
-  return 'light';
+type CapacitySummaryMember = {
+  userId: number;
+  name: string;
+  projects: number;
+  tasks: number;
+  loggedHours: number;
+  capacityHours: number;
+  utilization: number;
+};
+
+type CapacitySummaryResponse = {
+  period: { from: string; to: string };
+  teamTotals: { capacityHours: number; loggedHours: number; avgUtilization: number };
+  members: CapacitySummaryMember[];
+};
+
+type CapacityForecastAllocation = {
+  userId: number;
+  name: string;
+  hours: number;
+  utilization: number;
+  status: ResourceAllocation['status'];
+  topProjects?: { project: string; hours: number }[];
+};
+
+type CapacityForecastWeek = {
+  id: string;
+  label: string;
+  start: string;
+  end: string;
+  health: ResourceAllocation['status'];
+  allocations: CapacityForecastAllocation[];
+};
+
+type CapacityForecastResponse = {
+  window: { start: string; weeks: number; weekStartsOn: number };
+  weeks: CapacityForecastWeek[];
 };
 
 const getWeekBadgeStyles = (status: ResourceAllocation['status']) => {
@@ -91,67 +121,31 @@ const Workload = () => {
   const fetchWorkload = async () => {
     try {
       setLoading(true);
-      // Get all users
-      const usersResponse = await api.get('/users');
-      const users = usersResponse.data.data || usersResponse.data;
-
-      const [timeEntriesResponse, tasksResponse] = await Promise.all([
-        api.get('/time-entries', {
-          params: {
-            // Current month window
-            from: new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString(),
-            to: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString(),
-          },
+      const [summaryResponse, forecastResponse] = await Promise.all([
+        api.get<CapacitySummaryResponse>('/capacity/summary'),
+        api.get<CapacityForecastResponse>('/capacity/forecast', {
+          params: { includeProjectMix: true },
         }),
-        api.get('/tasks'),
       ]);
 
-      const timeEntries = timeEntriesResponse.data.data || timeEntriesResponse.data;
-      const allTasks = tasksResponse.data.data || tasksResponse.data;
+      const summary = summaryResponse.data;
+      const forecast = forecastResponse.data;
 
-      const engineers = users.filter((u: any) => u.role === 'engineer' && u.is_active);
-      const tasksByUser = allTasks.reduce((acc: Record<number, any[]>, task: any) => {
-        if (!task.assigned_to) {
-          return acc;
-        }
-        if (!acc[task.assigned_to]) {
-          acc[task.assigned_to] = [];
-        }
-        acc[task.assigned_to].push(task);
-        return acc;
-      }, {});
-
-      // Calculate workload for each user
-      const workloadData: UserWorkload[] = engineers.map((engineer: any) => {
-          const userEntries = timeEntries.filter((te: any) => te.user_id === engineer.id);
-          const totalHours = userEntries.reduce((sum: number, te: any) => sum + parseFloat(te.duration_hours || 0), 0);
-          
-          const userTasks = tasksByUser[engineer.id] || [];
-          const userProjects = [...new Set(userTasks.map((t: any) => t.project_id))];
-
-          // Assume 160 hours per month capacity (40 hours/week * 4 weeks)
-          const capacity = 160;
-          const utilization = (totalHours / capacity) * 100;
-
-          return {
-            userId: engineer.id,
-            userName: `${engineer.first_name} ${engineer.last_name}`,
-            totalHours: parseFloat(totalHours.toFixed(2)),
-            capacity,
-            utilization: parseFloat(utilization.toFixed(1)),
-            projects: userProjects.length,
-            tasks: userTasks.length,
-          };
-        });
+      const workloadData: UserWorkload[] = (summary.members || []).map((member) => ({
+        userId: member.userId,
+        userName: member.name,
+        totalHours: member.loggedHours,
+        capacity: member.capacityHours,
+        utilization: member.utilization,
+        projects: member.projects,
+        tasks: member.tasks,
+      }));
 
       setWorkload(workloadData.sort((a, b) => b.utilization - a.utilization));
       setCapacityAlerts(workloadData.filter((member) => member.utilization >= 90));
 
-      const timeline = buildResourceTimeline(engineers, tasksByUser);
-      setResourceTimeline(timeline);
-
-      const breakdownMap = buildProjectBreakdown(engineers, tasksByUser);
-      setProjectBreakdown(breakdownMap);
+      setResourceTimeline(normalizeForecastWeeks(forecast.weeks || []));
+      setProjectBreakdown(buildProjectBreakdownFromForecast(forecast.weeks || []));
       setLastUpdated(format(new Date(), 'MMM d, h:mm a'));
     } catch (error: any) {
       toast.error('Failed to load workload data');
@@ -160,85 +154,51 @@ const Workload = () => {
     }
   };
 
-  const buildProjectBreakdown = (engineers: any[], tasksByUser: Record<number, any[]>) => {
-    return engineers.reduce((acc, engineer) => {
-      const userTasks = tasksByUser[engineer.id] || [];
-      if (!userTasks.length) {
-        acc[engineer.id] = [];
-        return acc;
-      }
+  const buildProjectBreakdownFromForecast = (weeks: CapacityForecastWeek[]) => {
+    const aggregates = weeks.reduce((acc, week) => {
+      week.allocations.forEach((allocation) => {
+        if (!allocation.topProjects) {
+          return;
+        }
 
-      const aggregated = userTasks.reduce((projectMap: Record<string, number>, task: any) => {
-        const projectName = task.project_name || `Project #${task.project_id}`;
-        const estimate = parseFloat(task.estimated_hours || 0);
-        const hours = Number.isNaN(estimate) || estimate === 0 ? DEFAULT_TASK_ESTIMATE : estimate;
-        projectMap[projectName] = (projectMap[projectName] || 0) + hours;
-        return projectMap;
-      }, {});
+        if (!acc[allocation.userId]) {
+          acc[allocation.userId] = {};
+        }
 
-      acc[engineer.id] = Object.entries(aggregated)
-        .map(([project, hours]) => ({ project, hours: parseFloat(hours.toFixed(1)) }))
+        allocation.topProjects.forEach((project) => {
+          acc[allocation.userId][project.project] =
+            (acc[allocation.userId][project.project] || 0) + project.hours;
+        });
+      });
+      return acc;
+    }, {} as Record<number, Record<string, number>>);
+
+    return Object.entries(aggregates).reduce((acc, [userId, projects]) => {
+      acc[Number(userId)] = Object.entries(projects)
+        .map(([project, hours]) => ({
+          project,
+          hours: parseFloat(hours.toFixed(1)),
+        }))
         .sort((a, b) => b.hours - a.hours);
       return acc;
     }, {} as Record<number, ProjectAllocation[]>);
   };
 
-  const buildResourceTimeline = (engineers: any[], tasksByUser: Record<number, any[]>) => {
-    const baseWeek = startOfWeek(new Date(), { weekStartsOn: 1 });
-
-    return Array.from({ length: PLANNING_WEEKS }, (_, index) => {
-      const weekStart = addWeeks(baseWeek, index);
-      const weekEnd = endOfWeek(weekStart, { weekStartsOn: 1 });
-
-      const allocations: ResourceAllocation[] = engineers
-        .map((engineer) => {
-          const userTasks = tasksByUser[engineer.id] || [];
-          if (!userTasks.length) {
-            return null;
-          }
-
-          const hours = userTasks.reduce((sum: number, task: any) => {
-            const dueDate = task.due_date ? new Date(task.due_date) : null;
-            const estimate = parseFloat(task.estimated_hours || 0);
-            const taskHours = Number.isNaN(estimate) || estimate === 0 ? DEFAULT_TASK_ESTIMATE : estimate;
-
-            if (dueDate && isWithinInterval(dueDate, { start: weekStart, end: weekEnd })) {
-              return sum + taskHours;
-            }
-
-            if (!task.due_date && index === 0) {
-              return sum + taskHours;
-            }
-
-            return sum;
-          }, 0);
-
-          if (hours === 0) {
-            return null;
-          }
-
-          const utilization = Math.round((hours / HOURS_PER_WEEK) * 100);
-          return {
-            userId: engineer.id,
-            userName: `${engineer.first_name} ${engineer.last_name}`,
-            hours: parseFloat(hours.toFixed(1)),
-            utilization,
-            status: getStatusFromUtilization(utilization),
-          };
-        })
-        .filter(Boolean) as ResourceAllocation[];
-
-      const highestUtilization = allocations.reduce((max, entry) => Math.max(max, entry.utilization), 0);
-
-      return {
-        id: `week-${index}`,
-        label: `${format(weekStart, 'MMM d')} – ${format(weekEnd, 'MMM d')}`,
-        start: weekStart,
-        end: weekEnd,
-        allocations,
-        health: getStatusFromUtilization(highestUtilization),
-      };
-    }).filter((week) => week.allocations.length > 0);
+  const normalizeForecastWeeks = (weeks: CapacityForecastWeek[]): ResourceWeek[] => {
+    return weeks.map((week, index) => ({
+      id: week.id || `week-${index}`,
+      label: week.label,
+      start: week.start,
+      end: week.end,
+      health: week.health,
+      allocations: week.allocations.map((allocation) => ({
+        userId: allocation.userId,
+        userName: allocation.name,
+        hours: allocation.hours,
+        utilization: allocation.utilization,
+        status: allocation.status,
+      })),
+    }));
   };
 
   const getUtilizationColor = (utilization: number) => {
