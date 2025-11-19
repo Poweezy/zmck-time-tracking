@@ -15,6 +15,8 @@ const TaskModal = ({ isOpen, onClose, task, projectId, onSuccess }: TaskModalPro
   const [loading, setLoading] = useState(false);
   const [projects, setProjects] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
+  const [availableTasks, setAvailableTasks] = useState<any[]>([]);
+  const [dependencies, setDependencies] = useState<any[]>([]);
   const [formData, setFormData] = useState({
     projectId: projectId?.toString() || '',
     title: '',
@@ -43,9 +45,16 @@ const TaskModal = ({ isOpen, onClose, task, projectId, onSuccess }: TaskModalPro
           priority: task.priority?.toString() || '0',
           progressPercentage: task.progress_percentage?.toString() || '0',
         });
+        fetchDependencies(task.id);
       }
     }
   }, [task, isOpen, projectId]);
+
+  useEffect(() => {
+    if (formData.projectId) {
+      fetchAvailableTasks(parseInt(formData.projectId));
+    }
+  }, [formData.projectId]);
 
   const fetchProjects = async () => {
     try {
@@ -62,6 +71,52 @@ const TaskModal = ({ isOpen, onClose, task, projectId, onSuccess }: TaskModalPro
       setUsers(response.data);
     } catch (error: any) {
       // Silently fail - users endpoint might not be accessible
+    }
+  };
+
+  const fetchAvailableTasks = async (projId: number) => {
+    try {
+      const response = await api.get('/tasks', { params: { projectId: projId } });
+      const tasksData = response.data.data || response.data;
+      const tasksList = Array.isArray(tasksData) ? tasksData : [];
+      // Exclude current task from available tasks
+      setAvailableTasks(tasksList.filter((t: any) => !task || t.id !== task.id));
+    } catch (error) {
+      console.error('Failed to load tasks');
+    }
+  };
+
+  const fetchDependencies = async (taskId: number) => {
+    try {
+      const response = await api.get('/task-dependencies', { params: { taskId } });
+      setDependencies(response.data || []);
+    } catch (error) {
+      console.error('Failed to load dependencies');
+    }
+  };
+
+  const handleAddDependency = async (dependsOnTaskId: number) => {
+    if (!task) return;
+    try {
+      await api.post('/task-dependencies', {
+        taskId: task.id,
+        dependsOnTaskId,
+        dependencyType: 'finish_to_start',
+      });
+      toast.success('Dependency added');
+      fetchDependencies(task.id);
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Failed to add dependency');
+    }
+  };
+
+  const handleRemoveDependency = async (dependencyId: number) => {
+    try {
+      await api.delete(`/task-dependencies/${dependencyId}`);
+      toast.success('Dependency removed');
+      if (task) fetchDependencies(task.id);
+    } catch (error: any) {
+      toast.error('Failed to remove dependency');
     }
   };
 
@@ -218,6 +273,60 @@ const TaskModal = ({ isOpen, onClose, task, projectId, onSuccess }: TaskModalPro
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500"
           />
         </div>
+
+        {/* Task Dependencies Section - Only show when editing existing task */}
+        {task && formData.projectId && (
+          <div className="border-t border-gray-200 pt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Task Dependencies
+            </label>
+            <div className="space-y-2">
+              {dependencies.length > 0 && (
+                <div className="space-y-2 mb-3">
+                  {dependencies.map((dep) => (
+                    <div
+                      key={dep.id}
+                      className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                    >
+                      <span className="text-sm text-gray-700">
+                        Depends on: {dep.depends_on_task_title || 'Task #' + dep.depends_on_task_id}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveDependency(dep.id)}
+                        className="text-xs text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {availableTasks.length > 0 && (
+                <select
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      handleAddDependency(parseInt(e.target.value));
+                      e.target.value = '';
+                    }
+                  }}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-sm"
+                  defaultValue=""
+                >
+                  <option value="">Add dependency...</option>
+                  {availableTasks.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.title}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {availableTasks.length === 0 && (
+                <p className="text-xs text-gray-500">No other tasks available in this project</p>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-end space-x-3 pt-4">
           <button

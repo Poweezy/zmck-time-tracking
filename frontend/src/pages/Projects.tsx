@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
 import { useAuth } from '../hooks/useAuth';
@@ -45,6 +45,7 @@ const Projects = () => {
   const [sortBy, setSortBy] = useState('name');
   const [selectedProjects, setSelectedProjects] = useState<number[]>([]);
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProjects();
@@ -254,7 +255,7 @@ const Projects = () => {
               className={`bg-white rounded-xl shadow-card border border-gray-100 p-6 hover:shadow-hover hover:border-primary-200 transition-all duration-200 cursor-pointer ${
                 selectedProjects.includes(project.id) ? 'ring-2 ring-primary-500' : ''
               }`}
-              onClick={() => handleEdit(project)}
+              onClick={() => navigate(`/projects/${project.id}`)}
             >
               {(user?.role === 'admin' || user?.role === 'supervisor') && (
                 <div className="flex items-center justify-end mb-2">
@@ -309,11 +310,11 @@ const Projects = () => {
 
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
               <Link
-                to={`/tasks?projectId=${project.id}`}
+                to={`/projects/${project.id}`}
                 onClick={(e) => e.stopPropagation()}
                 className="text-sm text-primary-600 hover:text-primary-700 font-medium"
               >
-                View Tasks →
+                View Details →
               </Link>
               {(user?.role === 'admin' || user?.role === 'supervisor') && (
                 <div className="flex space-x-2">

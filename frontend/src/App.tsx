@@ -15,6 +15,7 @@ import Workload from './pages/Workload';
 import Expenses from './pages/Expenses';
 import Invoices from './pages/Invoices';
 import Budget from './pages/Budget';
+import ProjectDetail from './pages/ProjectDetail';
 import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -35,6 +36,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="projects" element={<Projects />} />
+          <Route path="projects/:id" element={<ProjectDetail />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="time-tracking" element={<TimeTracking />} />
           <Route path="approvals" element={<Approvals />} />
